@@ -12,6 +12,7 @@ ENV ORIGIN=http://localhost:3000
 ENV BETTER_AUTH_SECRET=build-placeholder
 
 RUN npm run build
+RUN npm prune --omit=dev
 
 FROM node:20-alpine AS production
 
