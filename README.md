@@ -30,7 +30,13 @@ Optionally set `ADMIN_EMAILS` as a comma-separated list to enable admin navigati
 npm run db:start
 ```
 
-4. Apply database schema:
+4. Generate the Better Auth database schema (creates `src/lib/server/db/auth.schema.ts`):
+
+```bash
+npm run auth:schema
+```
+
+5. Apply database schema:
 
 ```bash
 npm run db:push

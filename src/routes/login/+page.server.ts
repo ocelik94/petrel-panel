@@ -30,7 +30,8 @@ export const actions: Actions = {
 				return fail(400, { message: error.message || 'Login failed' });
 			}
 
-			return fail(500, { message: 'Unexpected error' });
+			const message = error instanceof Error ? error.message : 'Unexpected error';
+			return fail(500, { message });
 		}
 
 		return redirect(302, '/dashboard');
@@ -39,17 +40,25 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const provider = (formData.get('provider')?.toString() ?? 'github') as 'github';
 
-		const result = await auth.api.signInSocial({
-			body: {
-				provider,
-				callbackURL: '/dashboard'
+		try {
+			const result = await auth.api.signInSocial({
+				body: {
+					provider,
+					callbackURL: '/dashboard'
+				}
+			});
+
+			if (!result?.url) {
+				return fail(400, { message: 'GitHub sign-in failed — no redirect URL returned' });
 			}
-		});
 
-		if (!result.url) {
-			return fail(400, { message: 'GitHub sign-in failed' });
+			return redirect(302, result.url);
+		} catch (error) {
+			if (error instanceof APIError) {
+				return fail(400, { message: error.message || 'GitHub sign-in failed' });
+			}
+
+			return fail(500, { message: 'Unexpected error during GitHub sign-in' });
 		}
-
-		return redirect(302, result.url);
 	}
 };

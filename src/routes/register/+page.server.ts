@@ -32,7 +32,8 @@ export const actions: Actions = {
 				return fail(400, { message: error.message || 'Registration failed' });
 			}
 
-			return fail(500, { message: 'Unexpected error' });
+			const message = error instanceof Error ? error.message : 'Unexpected error';
+			return fail(500, { message });
 		}
 
 		return redirect(302, '/dashboard');
