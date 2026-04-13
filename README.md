@@ -1,42 +1,59 @@
-# sv
+# Petrel Panel
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Petrel Panel is a SaaS game server management panel for provisioning and managing container-based game servers through `petrel-wings` agents running on host nodes.
 
-## Creating a project
+## Prerequisites
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Node.js 20+
+- PostgreSQL
+- Docker (for running the local database via Compose)
 
-```sh
-# create a new project
-npx sv create my-app
+## Setup
+
+1. Clone the repository and install dependencies:
+
+```bash
+npm install
 ```
 
-To recreate this project with the same configuration:
+2. Copy environment variables:
 
-```sh
-# recreate this project
-npx sv@0.15.1 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:typography,forms" drizzle="database:postgresql+postgresql:postgres.js+docker:yes" paraglide="languageTags:en, de+demo:yes" better-auth="demo:password,github" sveltekit-adapter="adapter:static" --install npm petrel-panel
+```bash
+cp .env.example .env
 ```
 
-## Developing
+3. Start PostgreSQL with Docker Compose:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+npm run db:start
+```
 
-```sh
+4. Apply database schema:
+
+```bash
+npm run db:push
+```
+
+5. Start the development server:
+
+```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+## Useful Scripts
 
-To create a production version of your app:
+- `npm run dev` — start dev server
+- `npm run build` — production build
+- `npm run check` — Svelte + TypeScript checks
+- `npm run lint` — Prettier + ESLint
+- `npm run db:push` — push Drizzle schema to DB
+- `npm run auth:schema` — generate Better Auth schema file
 
-```sh
-npm run build
-```
+## Tech Stack
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- SvelteKit (SSR)
+- Better Auth (email/password + GitHub OAuth)
+- Drizzle ORM + PostgreSQL
+- Tailwind CSS v4
+- Paraglide i18n
+- TypeScript
