@@ -22,6 +22,8 @@ npm install
 cp .env.example .env
 ```
 
+Optionally set `ADMIN_EMAILS` as a comma-separated list to enable admin navigation items.
+
 3. Start PostgreSQL with Docker Compose:
 
 ```bash

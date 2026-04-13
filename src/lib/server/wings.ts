@@ -8,7 +8,7 @@ export class WingsClient {
 		private token: string
 	) {}
 
-	private async request<T>(path: string, init?: RequestInit): Promise<T> {
+	private async request<T>(path: string, init?: RequestInit): Promise<T | undefined> {
 		const response = await fetch(`${this.baseUrl}${path}`, {
 			...init,
 			headers: {
@@ -24,24 +24,40 @@ export class WingsClient {
 		}
 
 		if (response.status === 204) {
-			return {} as T;
+			return undefined;
 		}
 
 		return (await response.json()) as T;
 	}
 
 	async health(): Promise<{ status: string }> {
-		return this.request<{ status: string }>('/health');
+		const response = await this.request<{ status: string }>('/health');
+		if (!response) {
+			throw new Error('Wings health endpoint returned no data');
+		}
+
+		return response;
 	}
 
 	async listServers(): Promise<WingsServer[]> {
 		const response = await this.request<{ data: WingsServer[] } | WingsServer[]>('/api/servers');
+		if (!response) {
+			return [];
+		}
+
 		return Array.isArray(response) ? response : response.data;
 	}
 
 	async getFileContents(serverId: string, filePath: string): Promise<FileEntry> {
 		const query = new URLSearchParams({ file: filePath }).toString();
-		return this.request<FileEntry>(`/api/servers/${serverId}/files/contents?${query}`);
+		const response = await this.request<FileEntry>(
+			`/api/servers/${serverId}/files/contents?${query}`
+		);
+		if (!response) {
+			throw new Error('Wings file contents endpoint returned no data');
+		}
+
+		return response;
 	}
 
 	async writeFile(
@@ -49,24 +65,36 @@ export class WingsClient {
 		filePath: string,
 		content: string
 	): Promise<{ success: boolean }> {
-		return this.request<{ success: boolean }>(`/api/servers/${serverId}/files/write`, {
-			method: 'POST',
-			body: JSON.stringify({ file: filePath, content })
-		});
+		const response = await this.request<{ success: boolean }>(
+			`/api/servers/${serverId}/files/write`,
+			{
+				method: 'POST',
+				body: JSON.stringify({ file: filePath, content })
+			}
+		);
+
+		return response ?? { success: true };
 	}
 
 	async deleteFiles(serverId: string, paths: string[]): Promise<{ success: boolean }> {
-		return this.request<{ success: boolean }>(`/api/servers/${serverId}/files/delete`, {
-			method: 'POST',
-			body: JSON.stringify({ paths })
-		});
+		const response = await this.request<{ success: boolean }>(
+			`/api/servers/${serverId}/files/delete`,
+			{
+				method: 'POST',
+				body: JSON.stringify({ paths })
+			}
+		);
+
+		return response ?? { success: true };
 	}
 
 	async power(serverId: string, action: PowerAction): Promise<JsonValue> {
-		return this.request<JsonValue>(`/api/servers/${serverId}/power`, {
-			method: 'POST',
-			body: JSON.stringify({ action })
-		});
+		return (
+			(await this.request<JsonValue>(`/api/servers/${serverId}/power`, {
+				method: 'POST',
+				body: JSON.stringify({ action })
+			})) ?? {}
+		);
 	}
 }
 
