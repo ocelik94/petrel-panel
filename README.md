@@ -65,3 +65,21 @@ npm run dev
 - Tailwind CSS v4
 - Paraglide i18n
 - TypeScript
+
+## Docker
+
+Build the production image:
+
+```bash
+docker build -t petrel-panel .
+```
+
+Run the container:
+
+```bash
+docker run -p 3000:3000 --env-file .env petrel-panel
+```
+
+Runtime environment variables `DATABASE_URL`, `ORIGIN`, and `BETTER_AUTH_SECRET` are required.
+
+For full-stack deployment (panel + supporting services), see the Docker Compose setup in the `petrel-wings` repository.
