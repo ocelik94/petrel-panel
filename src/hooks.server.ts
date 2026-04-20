@@ -7,13 +7,13 @@ import { getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { seedDefaultAdmin } from '$lib/server/seed';
 
-let seeded = false;
+let seedPromise: Promise<void> | null = null;
 
 const handleSeed: Handle = async ({ event, resolve }) => {
-	if (!seeded) {
-		seeded = true;
-		await seedDefaultAdmin();
+	if (!seedPromise) {
+		seedPromise = seedDefaultAdmin();
 	}
+	await seedPromise;
 	return resolve(event);
 };
 
