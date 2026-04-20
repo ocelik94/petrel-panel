@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ ENV BETTER_AUTH_SECRET=build-placeholder
 RUN npm run build
 RUN npm prune --omit=dev
 
-FROM node:20-alpine AS production
+FROM node:25-alpine AS production
 
 RUN addgroup -S petrel && adduser -S petrel -G petrel
 
