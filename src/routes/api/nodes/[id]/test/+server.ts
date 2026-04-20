@@ -29,6 +29,6 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 		return json({ status: 'ok' });
 	} catch (err) {
 		const message = err instanceof Error ? err.message : 'Unknown error';
-		return json({ status: 'error', message }, { status: 200 });
+		return json({ status: 'error', message }, { status: 503 });
 	}
 };
