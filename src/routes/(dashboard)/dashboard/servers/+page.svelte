@@ -17,9 +17,9 @@
 <div class="space-y-6">
 	<div class="flex items-center justify-between">
 		<h1 class="text-2xl font-semibold">Servers</h1>
-		<button
+		<a
 			class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium hover:bg-blue-500"
-			type="button">Create Server</button
+			href={resolve('/dashboard/servers/new')}>Create Server</a
 		>
 	</div>
 
