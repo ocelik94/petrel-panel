@@ -1,0 +1,17 @@
+# Wings daemon configuration for local development.
+# Mount this file into the wings container as /etc/wings/config.yml (read-only).
+
+panel_url: http://panel:3000
+
+# REQUIRED: Replace with a real node token generated from the panel admin UI.
+# The daemon will fail to authenticate if this placeholder value is used as-is.
+token: REPLACE_WITH_REAL_TOKEN_FROM_PANEL_ADMIN
+
+api:
+  host: 0.0.0.0
+  port: 8080
+
+data_path: /var/lib/wings/data
+
+docker:
+  socket: /var/run/docker.sock
