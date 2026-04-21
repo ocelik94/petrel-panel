@@ -5,6 +5,17 @@ import { svelteKitHandler } from 'better-auth/svelte-kit';
 import type { Handle } from '@sveltejs/kit';
 import { getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
+import { seedDefaultAdmin } from '$lib/server/seed';
+
+let seedPromise: Promise<void> | null = null;
+
+const handleSeed: Handle = async ({ event, resolve }) => {
+	if (!seedPromise) {
+		seedPromise = seedDefaultAdmin();
+	}
+	await seedPromise;
+	return resolve(event);
+};
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -29,4 +40,4 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	return svelteKitHandler({ event, resolve, auth, building });
 };
 
-export const handle: Handle = sequence(handleParaglide, handleBetterAuth);
+export const handle: Handle = sequence(handleSeed, handleParaglide, handleBetterAuth);
